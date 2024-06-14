@@ -18,7 +18,8 @@ CREATE TABLE cliente (
 	estado char(2),
 	genero char(1),
 	dt_nascimento date,
-	estadocivil char(1)
+	estadocivil char(1),
+    CONSTRAINT chk_genero_cl CHECK (genero IN ('M', 'F'))
 );
 
 SELECT * FROM cliente;
@@ -61,7 +62,6 @@ CREATE TABLE compra (
 	hora time,
     coddcliente int,
     cod_funcionario int,
-    cod_produto int,
     FOREIGN KEY (coddcliente) REFERENCES cliente(coddcliente),
     FOREIGN KEY (cod_funcionario) REFERENCES funcionario(cod_funcionario)
 );
@@ -101,11 +101,12 @@ insert into compra (cod_compra, dt_data, hora,coddcliente,cod_funcionario) value
 
 CREATE TABLE produto (
 	cod_produto int primary key,
-	nome  varchar(30),
-	preco real,
+	nome  varchar(30)  NOT NULL,
+	preco real  NOT NULL,
 	descricao varchar(30),
     cod_fabricante int,
-	FOREIGN KEY (cod_fabricante) REFERENCES fabricante(cod_fabricante)
+	FOREIGN KEY (cod_fabricante) REFERENCES fabricante(cod_fabricante),
+    CHECK (preco > 0)
 );
 
 insert into produto (cod_produto, nome, descricao, preco,cod_fabricante) values (1, 'requeijão', 'M', '11.06',4);
@@ -190,7 +191,11 @@ CREATE TABLE funcionario(
 	estadocivil char(1),
 	cidade varchar(20),
 	estado char(2),
-	cargo varchar(30)
+	cargo varchar(30),
+    CONSTRAINT chk_genero_func CHECK (genero IN ('M', 'F')),  -- Apenas 'M' ou 'F' são permitidos
+	CONSTRAINT chk_estado_func CHECK (estado IN ('AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 
+													'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
+                                                    'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'))
 );
 
 SELECT * FROM funcionario;
@@ -230,7 +235,7 @@ CREATE TABLE fabricante(
 	cod_fabricante int primary key,
 	nome varchar(30),
 	site varchar(20),
-	email varchar(30)
+	email varchar(30) UNIQUE
 );
 
 SELECT * FROM fabricante;
